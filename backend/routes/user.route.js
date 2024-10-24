@@ -1,11 +1,11 @@
-const express = require('express')
-const router = express.Router()
-const userController = require("../controllers/user.controller")
+// routes/user.routes.js
+const express = require('express');
+const { handleInsertUser, handleLoginUser, handleUpdatePassword } = require('../controllers/user.controller');
 
-router.post('/register', userController.userRegister)
+const router = express.Router();
 
-router.post('/login', userController.userLogin)
+router.post('/register', handleInsertUser); // Rota para registrar um usuário
+router.post('/login', handleLoginUser); // Nova rota para login do usuário
+router.put('/update-password', handleUpdatePassword); // Rota para atualizar senha
 
-router.post('/updatePassword/:id', userController.updatePassword)
-
-module.exports = router
+module.exports = router;
