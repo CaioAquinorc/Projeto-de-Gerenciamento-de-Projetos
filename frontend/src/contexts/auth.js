@@ -1,5 +1,6 @@
-import { Children, createContext, useEffect, useState } from "react";
-import { json } from "react-router-dom";
+import { createContext, useEffect, useState } from "react";
+import axios from "axios";
+
 
 export const AuthContext = createContext({});
 
@@ -20,44 +21,25 @@ export const AuthProvider = ({ children }) => {
 
     }, [])
 
-    const login = (email, password) => {
-        const userStorage = JSON.parse(localStorage.getItem("users_db"))
+    const login = async (email, password) => {
+        const hasUser = JSON.parse( await axios.post(process.env.BACKEND_URL, "/login", JSON.stringify(email, password)));
 
-        const hasUser = userStorage?.filter((user) => user.email === email);
-
-        if(hasUser?.length) {
-            if(hasUser[0].email === email && hasUser[0].password === password){
-                const token = Math.random().toString(36).substring(2);
-                localStorage.setItem("user_token", JSON.stringify({token}));
-                setUser({email, password});
-                return;
-            } else {
-                return "E-mail ou senha incorretos";
-            }
-        } else {
-            return "Usuário não cadastrado";
+        if(hasUser?.error) {
+            return hasUser.error;
         }
+
+        const token = Math.random().toString(36).substring(2);
+        localStorage.setItem("user_token", JSON.stringify({token, email}));
+        setUser({email, password});
+        return;
     };
 
-    const register = (email, password) => {
-        const userStorage = JSON.parse(localStorage.getItem("users_bd"));
+    const register = async (username, email, password, first_name, last_name) => {
+        const hasUser = JSON.parse( await axios.post(process.env.BACKEND_URL, "/regsiter", JSON.stringify(username, email, password, first_name, last_name)));
 
-        const hasUser = userStorage?.filter((user) => user.email === email);
-
-        if(hasUser?.length){
-            return "Já tem uma conta com esse E-mail";
+        if(hasUser?.error) {
+            return hasUser.error;
         }
-
-        let newUser;
-
-        if(userStorage) {
-            newUser = [...userStorage, {email, password}];
-        } else {
-            newUser = [{email, password}]
-        }
-
-        localStorage.setItem("users_db", JSON.stringify(newUser));
-
         return;
     };
 
@@ -71,7 +53,6 @@ export const AuthProvider = ({ children }) => {
         <AuthContext.Provider
             value={{ user, logado: !!user, login, register, logout }}
         >
-        
             {children}
         </AuthContext.Provider>
     )

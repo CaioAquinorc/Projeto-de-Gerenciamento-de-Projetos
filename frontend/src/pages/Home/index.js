@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React from "react";
 import Button from "../../components/Button";
 import { useNavigate } from "react-router-dom";
 import useAuth from "../../hooks/useAuth";
@@ -7,7 +7,7 @@ import useAuth from "../../hooks/useAuth";
     const { logout } = useAuth();
     const navigate = useNavigate();
 
-    const [email] = useState("");
+    const email = JSON.parse(localStorage.getItem("user_token")).email;
 
     return (
         <div>
