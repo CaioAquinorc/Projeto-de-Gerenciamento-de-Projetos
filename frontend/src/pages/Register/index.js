@@ -16,7 +16,7 @@ const Register = () => {
     const[lastName, setLastName] = useState("");
     const[error, setError] = useState("");
 
-    const handleRegister = () => {
+    const handleRegister = async () => {
         if(!userName |!email | !password | !confirmPassword){
             setError("Preencha todos os campos");
             return;
@@ -25,7 +25,7 @@ const Register = () => {
             return;
         }
 
-        const res = register(userName, email, password, firstName, lastName);
+        const res = await register(userName, email, password, firstName, lastName);
 
         if(res){
             setError(res);
